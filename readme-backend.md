@@ -140,6 +140,7 @@ backend/src/
     ├── polis/             # DONE — Turn 6 (master data untuk dropdown)
     ├── doctors/           # DONE — Turn 6 (master data untuk dropdown)
     ├── registrations/     # DONE — Turn 6 (create, list, update status)
+    ├── queues/            # DONE — Turn 7 (create, list, call, call-next, status)
     ├── registrations/     # Turn 6
     ├── queues/            # Turn 7
     ├── medical-records/   # Turn 8
