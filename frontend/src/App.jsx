@@ -3,6 +3,8 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import RegistrationPage from './pages/RegistrationPage';
 import PatientPage from './pages/PatientPage';
+import QueuePage from './pages/QueuePage';
+
 
 function App() {
   return (
@@ -11,6 +13,7 @@ function App() {
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/registrations" element={<RegistrationPage />} />
+      <Route path="/queues" element={<QueuePage />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
       <Route path="/patients" element={<PatientPage />} />
     </Routes>
