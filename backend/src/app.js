@@ -8,6 +8,7 @@ import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yaml';
 import authRouter from './modules/auth/auth.routes.js';
+import patientRouter from './modules/patients/patient.routes.js';
 import { pool } from './config/database.js';
 import { ok, fail } from './utils/response.js';
 
@@ -44,6 +45,7 @@ function createApp() {
   );
 
   app.use('/', authRouter);
+  app.use('/patients', patientRouter);
 
   app.get('/health', async (req, res) => {
     try {
