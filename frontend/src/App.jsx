@@ -4,6 +4,7 @@ import DashboardPage from './pages/DashboardPage';
 import RegistrationPage from './pages/RegistrationPage';
 import PatientPage from './pages/PatientPage';
 import QueuePage from './pages/QueuePage';
+import MedicalRecordPage from './pages/MedicalRecordPage';
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
       <Route path="/queues" element={<QueuePage />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
       <Route path="/patients" element={<PatientPage />} />
+      <Route path="/medical-records" element={<MedicalRecordPage />} />
     </Routes>
   );
 }
