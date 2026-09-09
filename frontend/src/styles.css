@@ -599,3 +599,218 @@ input {
     margin-left: 62px;
   }
 }
+
+.primary-button {
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 10px;
+  color: white;
+  background: #168052;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.primary-button:hover {
+  background: #0c5a3c;
+}
+
+.data-card {
+  border: 1px solid #dcebe2;
+  border-radius: 15px;
+  background: white;
+  box-shadow: 0 8px 25px rgba(13, 74, 47, 0.05);
+}
+
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px 24px;
+  border-bottom: 1px solid #edf3ef;
+}
+
+.table-toolbar h2 {
+  margin: 0;
+  color: #16352a;
+  font-size: 19px;
+}
+
+.table-toolbar p {
+  margin: 5px 0 0;
+  color: #789086;
+  font-size: 13px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: min(100%, 310px);
+  padding: 0 12px;
+  border: 1px solid #cfe0d6;
+  border-radius: 9px;
+  color: #668074;
+}
+
+.search-box:focus-within {
+  border-color: #168052;
+  box-shadow: 0 0 0 3px #d9f4e5;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 11px 0;
+  border: 0;
+  outline: 0;
+  color: #27483b;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.patient-table {
+  width: 100%;
+  min-width: 970px;
+  border-collapse: collapse;
+}
+
+.patient-table th,
+.patient-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #edf3ef;
+  color: #5f786c;
+  font-size: 13px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.patient-table th {
+  color: #668074;
+  background: #fbfdfc;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.patient-table tbody tr:hover {
+  background: #f7fcf9;
+}
+
+.patient-table td strong {
+  color: #27483b;
+}
+
+.record-number {
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: #0b6d42;
+  background: #dcf6e7;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.gender-badge {
+  padding: 6px 9px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.gender-male {
+  color: #2469b0;
+  background: #deedff;
+}
+
+.gender-female {
+  color: #9b4b87;
+  background: #fbe4f5;
+}
+
+.table-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.table-actions button {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #dcebe2;
+  border-radius: 7px;
+  color: #47665a;
+  background: white;
+  cursor: pointer;
+}
+
+.table-actions button:hover {
+  border-color: #168052;
+  color: #168052;
+  background: #f2fbf6;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 24px;
+}
+
+.pagination p {
+  margin: 0;
+  color: #789086;
+  font-size: 13px;
+}
+
+.pagination div {
+  display: flex;
+  gap: 6px;
+}
+
+.pagination button {
+  padding: 7px 10px;
+  border: 1px solid #dcebe2;
+  border-radius: 7px;
+  color: #47665a;
+  background: white;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pagination .page-active {
+  border-color: #168052;
+  color: white;
+  background: #168052;
+}
+
+@media (max-width: 600px) {
+  .dashboard-header {
+    align-items: flex-start;
+  }
+
+  .table-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .pagination {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pagination div {
+    flex-wrap: wrap;
+  }
+}
