@@ -137,6 +137,9 @@ backend/src/
 └── modules/               # one folder per feature
     ├── auth/              # DONE — Turn 4 (login, logout, JWT)
     ├── patients/          # DONE — Turn 5 (CRUD, search, pagination)
+    ├── polis/             # DONE — Turn 6 (master data untuk dropdown)
+    ├── doctors/           # DONE — Turn 6 (master data untuk dropdown)
+    ├── registrations/     # DONE — Turn 6 (create, list, update status)
     ├── registrations/     # Turn 6
     ├── queues/            # Turn 7
     ├── medical-records/   # Turn 8
