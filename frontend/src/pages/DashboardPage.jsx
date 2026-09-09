@@ -1,50 +1,77 @@
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import api from '../api';
+import { useAuth } from '../AuthContext';
 
-const statistics = [
-  {
-    label: 'Total Pasien',
-    value: '1,248',
-    description: 'Seluruh pasien terdaftar',
-    icon: '♙',
-    color: 'green',
-  },
-  {
-    label: 'Pasien Hari Ini',
-    value: '24',
-    description: 'Pasien terdaftar hari ini',
-    icon: '☀',
-    color: 'blue',
-  },
-  {
-    label: 'Antrean Hari Ini',
-    value: '18',
-    description: 'Total nomor antrean',
-    icon: '☷',
-    color: 'orange',
-  },
-  {
-    label: 'Menunggu Dilayani',
-    value: '7',
-    description: 'Pasien masih menunggu',
-    icon: '◷',
-    color: 'purple',
-  },
-  {
-    label: 'Selesai Dilayani',
-    value: '11',
-    description: 'Pasien sudah diperiksa',
-    icon: '✓',
-    color: 'teal',
-  },
+const statusLabels = {
+  menunggu: 'Menunggu',
+  dipanggil: 'Dipanggil',
+  pemeriksaan: 'Pemeriksaan',
+  selesai: 'Selesai',
+  dibatalkan: 'Dibatalkan',
+};
+
+const statusBadgeClass = {
+  menunggu: 'status-waiting',
+  dipanggil: 'status-progress',
+  pemeriksaan: 'status-progress',
+  selesai: 'status-done',
+  dibatalkan: 'status-waiting',
+};
+
+const statisticCards = [
+  { key: 'total_patients', label: 'Total Pasien', description: 'Seluruh pasien terdaftar', icon: '♙', color: 'green' },
+  { key: 'total_patients_today', label: 'Pasien Hari Ini', description: 'Pasien terdaftar hari ini', icon: '☀', color: 'blue' },
+  { key: 'total_queue_today', label: 'Antrean Hari Ini', description: 'Total nomor antrean', icon: '☷', color: 'orange' },
+  { key: 'total_waiting', label: 'Menunggu Dilayani', description: 'Pasien masih menunggu', icon: '◷', color: 'purple' },
+  { key: 'total_finished', label: 'Selesai Dilayani', description: 'Pasien sudah diperiksa', icon: '✓', color: 'teal' },
 ];
 
-const queues = [
-  { number: 'A001', patient: 'Andi Pratama', poly: 'Poli Umum', status: 'Pemeriksaan' },
-  { number: 'A002', patient: 'Siti Rahma', poly: 'Poli Umum', status: 'Menunggu' },
-  { number: 'A003', patient: 'Budi Hartono', poly: 'Poli Gigi', status: 'Menunggu' },
-];
+const emptyStats = {
+  total_patients: 0,
+  total_patients_today: 0,
+  total_queue_today: 0,
+  total_waiting: 0,
+  total_finished: 0,
+  check_in_today: 0,
+  in_examination: 0,
+  active_doctors: 0,
+  recent_queues: [],
+};
 
 function DashboardPage() {
+  const navigate = useNavigate();
+  const { user, roleLabel } = useAuth();
+
+  const [stats, setStats] = useState(emptyStats);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const fetchDashboard = useCallback(async () => {
+    try {
+      const { data } = await api.get('/dashboard');
+      setStats(data.data);
+      setError('');
+    } catch (err) {
+      setError('Gagal memuat data dashboard. Pastikan backend berjalan.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchDashboard();
+    const interval = setInterval(fetchDashboard, 30000);
+    return () => clearInterval(interval);
+  }, [fetchDashboard]);
+
+  const todayLabel = new Date().toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+
   return (
     <div className="app-layout">
       <Sidebar />
@@ -53,7 +80,7 @@ function DashboardPage() {
         <header className="dashboard-header">
           <div>
             <p className="page-kicker">DASHBOARD</p>
-            <h1>Selamat datang, Administrator</h1>
+            <h1>Selamat datang, {user?.full_name ?? 'Pengguna'}</h1>
             <p className="page-description">
               Pantau ringkasan aktivitas klinik Anda hari ini.
             </p>
@@ -61,20 +88,23 @@ function DashboardPage() {
 
           <div className="today-date">
             <span>◷</span>
-            9 September 2026
+            {todayLabel}
           </div>
         </header>
 
+        {error ? <p className="table-error">{error}</p> : null}
+        {loading ? <p className="page-description">Memuat data...</p> : null}
+
         <section className="statistics-grid">
-          {statistics.map((statistic) => (
-            <article className="stat-card" key={statistic.label}>
+          {statisticCards.map((statistic) => (
+            <article className="stat-card" key={statistic.key}>
               <div className={`stat-icon ${statistic.color}`}>
                 {statistic.icon}
               </div>
 
               <div>
                 <p>{statistic.label}</p>
-                <strong>{statistic.value}</strong>
+                <strong>{stats[statistic.key]}</strong>
                 <span>{statistic.description}</span>
               </div>
             </article>
@@ -89,32 +119,34 @@ function DashboardPage() {
                 <h2>Antrean Hari Ini</h2>
               </div>
 
-              <button type="button" className="text-button">
+              <button
+                type="button"
+                className="text-button"
+                onClick={() => navigate('/queues')}
+              >
                 Lihat semua
               </button>
             </div>
 
             <div className="queue-list">
-              {queues.map((queue) => (
-                <div className="queue-item" key={queue.number}>
-                  <div className="queue-number">{queue.number}</div>
+              {stats.recent_queues.map((queue) => (
+                <div className="queue-item" key={queue.id}>
+                  <div className="queue-number">{queue.queue_number}</div>
 
                   <div className="queue-patient">
-                    <strong>{queue.patient}</strong>
-                    <span>{queue.poly}</span>
+                    <strong>{queue.patient.full_name}</strong>
+                    <span>{queue.poli.name}</span>
                   </div>
 
-                  <span
-                    className={`status-badge ${
-                      queue.status === 'Pemeriksaan'
-                        ? 'status-progress'
-                        : 'status-waiting'
-                    }`}
-                  >
-                    {queue.status}
+                  <span className={`status-badge ${statusBadgeClass[queue.status]}`}>
+                    {statusLabels[queue.status]}
                   </span>
                 </div>
               ))}
+
+              {!stats.recent_queues.length ? (
+                <p className="empty-row">Belum ada antrean hari ini.</p>
+              ) : null}
             </div>
           </article>
 
@@ -124,17 +156,22 @@ function DashboardPage() {
 
             <div className="activity-row">
               <span>Pasien check-in</span>
-              <strong>16 pasien</strong>
+              <strong>{stats.check_in_today} pasien</strong>
             </div>
 
             <div className="activity-row">
               <span>Pemeriksaan berlangsung</span>
-              <strong>1 pasien</strong>
+              <strong>{stats.in_examination} pasien</strong>
             </div>
 
             <div className="activity-row">
               <span>Jadwal dokter aktif</span>
-              <strong>2 dokter</strong>
+              <strong>{stats.active_doctors} dokter</strong>
+            </div>
+
+            <div className="activity-row">
+              <span>Status Anda</span>
+              <strong>{roleLabel}</strong>
             </div>
           </article>
         </section>
