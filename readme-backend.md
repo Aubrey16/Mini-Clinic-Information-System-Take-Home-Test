@@ -136,7 +136,7 @@ backend/src/
 ├── validators/            # zod schemas per module                   (Turns 4-8)
 └── modules/               # one folder per feature
     ├── auth/              # DONE — Turn 4 (login, logout, JWT)
-    ├── patients/          # Turn 5
+    ├── patients/          # DONE — Turn 5 (CRUD, search, pagination)
     ├── registrations/     # Turn 6
     ├── queues/            # Turn 7
     ├── medical-records/   # Turn 8
