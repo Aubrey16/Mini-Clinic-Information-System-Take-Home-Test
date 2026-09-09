@@ -12,6 +12,7 @@ import patientRouter from './modules/patients/patient.routes.js';
 import poliRouter from './modules/polis/poli.routes.js';
 import doctorRouter from './modules/doctors/doctor.routes.js';
 import registrationRouter from './modules/registrations/registration.routes.js';
+import queueRouter from './modules/queues/queue.routes.js';
 import { pool } from './config/database.js';
 import { ok, fail } from './utils/response.js';
 
@@ -52,6 +53,7 @@ function createApp() {
   app.use('/polis', poliRouter);
   app.use('/doctors', doctorRouter);
   app.use('/registrations', registrationRouter);
+  app.use('/queues', queueRouter);
 
   app.get('/health', async (req, res) => {
     try {
