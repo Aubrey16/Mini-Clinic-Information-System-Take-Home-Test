@@ -1178,3 +1178,143 @@ input {
   font-size: 13px;
   cursor: pointer;
 }
+
+/* Medical record page */
+.patient-banner-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.dynamic-row {
+  position: relative;
+  padding: 16px;
+  border: 1px solid #e3efe8;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  background: #fbfdfc;
+}
+
+.dynamic-row .form-grid,
+.dynamic-row .prescription-grid {
+  margin-bottom: 8px;
+}
+
+.row-remove {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 10px;
+  border: 1px solid #e5b4b4;
+  border-radius: 6px;
+  background: #fdeeee;
+  color: #a33a3a;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.row-remove:hover {
+  background: #f9dddd;
+}
+
+.history-card {
+  margin-bottom: 20px;
+}
+
+.history-entry {
+  padding: 16px;
+  border: 1px solid #e3efe8;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  background: #fbfdfc;
+}
+
+.history-entry header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.history-entry header strong {
+  color: #16352a;
+}
+
+.history-entry header span {
+  color: #7b9186;
+  font-size: 13px;
+}
+
+.history-entry dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.history-entry dt {
+  color: #7b9186;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.history-entry dd {
+  margin: 0;
+  color: #16352a;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@media (max-width: 720px) {
+  .patient-banner-actions {
+    margin-left: 0;
+  }
+}
+
+/* Riwayat pemeriksaan tabs */
+.tab-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.tab-item {
+  padding: 10px 20px;
+  border: 1px solid #d5e5dc;
+  border-radius: 10px;
+  background: white;
+  color: #52705f;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-item:hover {
+  background: #eaf5ef;
+}
+
+.tab-active {
+  background: #168052;
+  border-color: #168052;
+  color: white;
+}
+
+.row-expanded {
+  background: #f5faf7;
+}
+
+.history-detail {
+  margin: 12px 20px 4px;
+  border-radius: 12px;
+}
+
+.prescription-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.prescription-list li {
+  margin-bottom: 4px;
+}
