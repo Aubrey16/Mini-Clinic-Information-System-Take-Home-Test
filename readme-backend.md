@@ -128,13 +128,14 @@ backend/src/
 ├── config/
 │   └── database.js        # pg.Pool from DATABASE_URL (DONE)
 ├── middlewares/
-│   ├── auth.js            # verify JWT -> req.user = { id, role }   (Turn 4)
-│   └── role.js            # restrict route to certain roles          (Turn 4)
+│   ├── auth.js            # verify JWT -> req.user = { id, role }   (DONE — Turn 4)
+│   ├── role.js            # allow(...roles) restricts a route        (DONE — Turn 4)
+│   └── validate.js        # zod schema -> 422 Validation Error       (DONE — Turn 4)
 ├── utils/
 │   └── response.js        # ok(res, data, message) / fail(res, errors, message, status) (DONE)
 ├── validators/            # zod schemas per module                   (Turns 4-8)
 └── modules/               # one folder per feature
-    ├── auth/              # Turn 4  -> routes + controller
+    ├── auth/              # DONE — Turn 4 (login, logout, JWT)
     ├── patients/          # Turn 5
     ├── registrations/     # Turn 6
     ├── queues/            # Turn 7
@@ -220,6 +221,25 @@ dialog to test protected routes).
 
 > Tip: keep `docs/openapi.yaml` next to the code and update it as you build
 > each turn — reviewers can then see the API contract even before Turn 4.
+
+### Postman collection
+
+An alternative to Swagger UI: **`docs/postman-collection.json`** — all 19
+operations grouped into 7 folders (Auth, Patients, Registrations, Queues,
+Medical Records, Prescriptions, Dashboard).
+
+Import it: Postman → *Import* → drag the file in (or File → Import).
+Then:
+
+1. Run **Auth / Login** first — its test script automatically saves the JWT
+   to the collection variable `token`.
+2. Every other request sends `Authorization: Bearer {{token}}` automatically
+   (inherited from the collection-level auth).
+3. Switch accounts (admin / doctor / registration officer) by changing the
+   `email` / `password` collection variables, then login again.
+
+> Alternatively you can import `docs/openapi.yaml` directly into Postman —
+> but the JSON collection already wires up the token flow for you.
 
 ## 10. Standard Response Format (required by the PRD)
 

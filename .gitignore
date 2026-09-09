@@ -7,3 +7,8 @@ coverage/
 *.log
 .DS_Store
 
+# Postman working directory artifacts
+.postman/
+postman/
+docs/postman/
+

@@ -7,6 +7,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yaml';
+import authRouter from './modules/auth/auth.routes.js';
 import { pool } from './config/database.js';
 import { ok, fail } from './utils/response.js';
 
@@ -41,6 +42,8 @@ function createApp() {
     swaggerUi.serve,
     swaggerUi.setup(openApiSpec)
   );
+
+  app.use('/', authRouter);
 
   app.get('/health', async (req, res) => {
     try {

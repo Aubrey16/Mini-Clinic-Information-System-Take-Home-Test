@@ -1,8 +1,46 @@
-import { useNavigate } from 'react-router-dom';
-
+import { useState } from 'react';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 
 function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user, login } = useAuth();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setError('');
+
+    if (!email || !password) {
+      setError('Email dan kata sandi wajib diisi.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await login(email, password);
+      navigate('/dashboard', { replace: true });
+    } catch (err) {
+      const response = err.response?.data;
+      if (response?.errors) {
+        setError(Object.values(response.errors).join(' '));
+      } else {
+        setError('Tidak dapat terhubung ke server. Pastikan backend sedang berjalan.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <main className="login-page">
       <section className="login-hero">
@@ -35,12 +73,16 @@ function LoginPage() {
             Masukkan email dan kata sandi untuk melanjutkan.
           </p>
 
-          <form className="login-form">
+          <form className="login-form" onSubmit={handleSubmit}>
             <label htmlFor="email">Email</label>
             <input
               id="email"
               type="email"
               placeholder="contoh@klinik.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              autoFocus
             />
 
             <label htmlFor="password">Kata sandi</label>
@@ -48,10 +90,15 @@ function LoginPage() {
               id="password"
               type="password"
               placeholder="Masukkan kata sandi"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
             />
 
-            <button type="button" onClick={() => navigate('/dashboard')}>
-              Masuk
+            {error ? <p className="login-error">{error}</p> : null}
+
+            <button type="submit" disabled={loading}>
+              {loading ? 'Memproses...' : 'Masuk'}
             </button>
           </form>
 
