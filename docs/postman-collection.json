@@ -1,0 +1,397 @@
+{
+  "info": {
+    "name": "Mini Clinic Information System API",
+    "description": "Postman collection for the Mini Clinic API (all PRD endpoints).\n\n**How to use:**\n1. Run **Auth / Login** first — the test script automatically saves the JWT to the collection variable `token`.\n2. All other requests send `Authorization: Bearer {{token}}` automatically (inherited from collection auth).\n\n**Seed accounts** (password for all: `password123`):\n- admin@klinik.test (administration)\n- dokter@klinik.test (doctor)\n- pendaftaran@klinik.test (registration_officer)\n\nChange the `email` / `password` collection variables to switch accounts.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{token}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000", "type": "string" },
+    { "key": "email", "value": "admin@klinik.test", "type": "string" },
+    { "key": "password", "value": "password123", "type": "string" },
+    { "key": "token", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Response contains token\", () => {",
+                  "  pm.expect(res).to.have.property(\"success\", true);",
+                  "  pm.expect(res.data).to.have.property(\"token\");",
+                  "});",
+                  "if (res.data && res.data.token) {",
+                  "  pm.collectionVariables.set(\"token\", res.data.token);",
+                  "  console.log(\"Token saved to collection variable 'token'\");",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["login"]
+            },
+            "description": "Login and get a JWT. The token is auto-saved to the collection variable `token`."
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["logout"]
+            },
+            "description": "Logout. JWT is stateless — the client discards the token."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Patients",
+      "item": [
+        {
+          "name": "Get Patients (search + pagination)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/patients?page=1&limit=10&search=",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients"],
+              "query": [
+                { "key": "page", "value": "1", "description": "Page number (default 1)" },
+                { "key": "limit", "value": "10", "description": "Items per page (default 10, max 100)" },
+                { "key": "search", "value": "", "description": "Search by name, NIK, or medical record number (optional)" }
+              ]
+            },
+            "description": "List patients with optional search and pagination."
+          }
+        },
+        {
+          "name": "Get Patient Detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/patients/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Patient",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nik\": \"3273010101990005\",\n  \"full_name\": \"Rina Saputri\",\n  \"gender\": \"P\",\n  \"birth_date\": \"2001-01-01\",\n  \"phone\": \"081234567890\",\n  \"address\": \"Jl. Kenanga No. 3, Bandung\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/patients",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients"]
+            },
+            "description": "Create a patient. `medical_record_no` (RM-000001) is auto-generated by the database. NIK must be exactly 16 digits and unique."
+          }
+        },
+        {
+          "name": "Update Patient",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nik\": \"3273011201990001\",\n  \"full_name\": \"Andi Pratama\",\n  \"gender\": \"L\",\n  \"birth_date\": \"1999-01-12\",\n  \"phone\": \"0812-3456-7890\",\n  \"address\": \"Jl. Merdeka No. 10, Bandung\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/patients/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Patient (soft delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/patients/5",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients", "5"]
+            },
+            "description": "Soft delete — sets deleted_at, medical history is kept."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Registrations",
+      "item": [
+        {
+          "name": "Get Registrations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/registrations?page=1&limit=10&date=&status=",
+              "host": ["{{baseUrl}}"],
+              "path": ["registrations"],
+              "query": [
+                { "key": "page", "value": "1", "description": "Page number (default 1)" },
+                { "key": "limit", "value": "10", "description": "Items per page (default 10)" },
+                { "key": "date", "value": "", "description": "Filter by visit date, e.g. 2026-09-10 (optional)" },
+                { "key": "status", "value": "", "description": "menunggu | check_in | pemeriksaan | selesai (optional)" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Registration",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patient_id\": 2,\n  \"doctor_id\": 1,\n  \"poli_id\": 1,\n  \"visit_date\": \"2026-09-10\",\n  \"payment_type\": \"bpjs\",\n  \"chief_complaint\": \"Nyeri kepala dan pusing sejak pagi.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/registrations",
+              "host": ["{{baseUrl}}"],
+              "path": ["registrations"]
+            },
+            "description": "Create a visit registration. Status starts at `menunggu`. payment_type: bpjs | tunai | asuransi."
+          }
+        },
+        {
+          "name": "Update Registration (status)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"check_in\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/registrations/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["registrations", "2"]
+            },
+            "description": "Update a registration, e.g. change status: menunggu -> check_in -> pemeriksaan -> selesai."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Queues",
+      "item": [
+        {
+          "name": "Get Queues",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/queues?date=",
+              "host": ["{{baseUrl}}"],
+              "path": ["queues"],
+              "query": [
+                { "key": "date", "value": "", "description": "Queue date, e.g. 2026-09-10 (defaults to today)" }
+              ]
+            },
+            "description": "List queues. Queue numbers look like A001 (per poli per day)."
+          }
+        },
+        {
+          "name": "Create Queue",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"registration_id\": 2\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/queues",
+              "host": ["{{baseUrl}}"],
+              "path": ["queues"]
+            },
+            "description": "Create a queue from a registration. The number (A001, A002, ...) is auto-generated per poli per day."
+          }
+        },
+        {
+          "name": "Call Queue",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/queues/2/call",
+              "host": ["{{baseUrl}}"],
+              "path": ["queues", "2", "call"]
+            },
+            "description": "Call this queue — sets status to `dipanggil` and stamps called_at."
+          }
+        },
+        {
+          "name": "Update Queue Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"selesai\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/queues/2/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["queues", "2", "status"]
+            },
+            "description": "Change queue status: menunggu -> dipanggil -> pemeriksaan -> selesai (or dibatalkan). Timestamps started_at / finished_at are set automatically."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Medical Records",
+      "item": [
+        {
+          "name": "Save Medical Record (SOAP)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"registration_id\": 1,\n  \"patient_id\": 1,\n  \"doctor_id\": 1,\n  \"subjective\": \"Demam dan batuk sejak dua hari lalu.\",\n  \"blood_pressure\": \"120/80\",\n  \"body_temperature\": 36.8,\n  \"weight_kg\": 65,\n  \"height_cm\": 170,\n  \"assessment\": \"ISPA derajat ringan.\",\n  \"plan\": \"Istirahat cukup, perbanyak minum air putih.\",\n  \"medical_actions\": [\n    { \"name\": \"Pemeriksaan fisik umum\", \"notes\": \"Tenggorokan sedikit merah.\" }\n  ],\n  \"prescriptions\": [\n    {\n      \"notes\": \"Obat penurun demam.\",\n      \"items\": [\n        {\n          \"medicine_name\": \"Paracetamol\",\n          \"dosage\": \"500 mg\",\n          \"frequency\": \"3x sehari\",\n          \"duration\": \"3 hari\",\n          \"instructions\": \"Diminum setelah makan\"\n        }\n      ]\n    }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/medical-records",
+              "host": ["{{baseUrl}}"],
+              "path": ["medical-records"]
+            },
+            "description": "Save a full SOAP examination: subjective, vitals (objective), assessment, plan, plus medical actions and prescriptions — saved in one transaction. Registration and queue are flipped to `selesai`."
+          }
+        },
+        {
+          "name": "Get Patient History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/medical-records/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["medical-records", "1"]
+            },
+            "description": "Get a patient's examination history (newest first). Path param is the PATIENT id."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Prescriptions",
+      "item": [
+        {
+          "name": "Create Prescription",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"medical_record_id\": 1,\n  \"patient_id\": 1,\n  \"doctor_id\": 1,\n  \"notes\": \"Obat penurun demam.\",\n  \"items\": [\n    {\n      \"medicine_name\": \"Paracetamol\",\n      \"dosage\": \"500 mg\",\n      \"frequency\": \"3x sehari\",\n      \"duration\": \"3 hari\",\n      \"instructions\": \"Diminum setelah makan\"\n    }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/prescriptions",
+              "host": ["{{baseUrl}}"],
+              "path": ["prescriptions"]
+            }
+          }
+        },
+        {
+          "name": "Get Prescription",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/prescriptions/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["prescriptions", "1"]
+            },
+            "description": "Prescription detail including its items."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard"]
+            },
+            "description": "Today's counters: total_patients, total_patients_today, total_queue_today, total_waiting, total_finished."
+          }
+        }
+      ]
+    }
+  ]
+}

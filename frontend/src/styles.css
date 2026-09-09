@@ -1013,3 +1013,39 @@ input {
     flex-direction: column;
   }
 }
+/* Auth */
+.login-error {
+  margin: 12px 0 0;
+  padding: 10px 14px;
+  border: 1px solid #e5b4b4;
+  border-radius: 8px;
+  background: #fdeeee;
+  color: #a33a3a;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.login-form button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.sidebar-user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-logout {
+  padding: 8px 12px;
+  border: 1px solid #cfe0d6;
+  border-radius: 8px;
+  background: white;
+  color: #16352a;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.sidebar-logout:hover {
+  background: #eaf5ef;
+}

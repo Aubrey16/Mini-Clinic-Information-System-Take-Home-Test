@@ -1,4 +1,5 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 
 const menuItems = [
   { label: 'Dashboard', icon: '▦', path: '/dashboard' },
@@ -9,6 +10,22 @@ const menuItems = [
 ];
 
 function Sidebar() {
+  const navigate = useNavigate();
+  const { user, roleLabel, logout } = useAuth();
+
+  const initials = user?.full_name
+    ?.split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase();
+
+  async function handleLogout() {
+    await logout();
+    navigate('/login', { replace: true });
+  }
+
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
@@ -38,12 +55,21 @@ function Sidebar() {
       </nav>
 
       <div className="sidebar-user">
-        <div className="avatar">A</div>
+        <div className="avatar">{initials || '?'}</div>
 
-        <div>
-          <strong>Administrator</strong>
-          <span>Admin Klinik</span>
+        <div className="sidebar-user-info">
+          <strong>{user?.full_name ?? 'Pengguna'}</strong>
+          <span>{roleLabel}</span>
         </div>
+
+        <button
+          type="button"
+          className="sidebar-logout"
+          onClick={handleLogout}
+          title="Keluar"
+        >
+          Keluar
+        </button>
       </div>
     </aside>
   );
